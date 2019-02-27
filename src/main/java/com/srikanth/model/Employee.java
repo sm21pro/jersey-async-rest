@@ -4,6 +4,16 @@ import java.util.Objects;
 
 public class Employee {
 
+    private String employeeId;
+
+    public String getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(String employeeId) {
+        this.employeeId = employeeId;
+    }
+
     private String username;
     private String password;
     private String fullName;
@@ -83,7 +93,8 @@ public class Employee {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Employee employee = (Employee) o;
-        return Objects.equals(username, employee.username) &&
+        return Objects.equals(employeeId, employee.employeeId) &&
+                Objects.equals(username, employee.username) &&
                 Objects.equals(password, employee.password) &&
                 Objects.equals(fullName, employee.fullName) &&
                 Objects.equals(emailID, employee.emailID) &&
@@ -96,13 +107,14 @@ public class Employee {
     @Override
     public int hashCode() {
 
-        return Objects.hash(username, password, fullName, emailID, dateOfBirth, gender, securityQuestion, securityAnswer);
+        return Objects.hash(employeeId, username, password, fullName, emailID, dateOfBirth, gender, securityQuestion, securityAnswer);
     }
 
     @Override
     public String toString() {
         return "Employee{" +
-                "username='" + username + '\'' +
+                "employeeId='" + employeeId + '\'' +
+                ", username='" + username + '\'' +
                 ", password='" + "xxxxxx" + '\'' +
                 ", fullName='" + fullName + '\'' +
                 ", emailID='" + emailID + '\'' +

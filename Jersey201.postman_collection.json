@@ -1,0 +1,102 @@
+{
+	"info": {
+		"_postman_id": "e3e2ad6e-6d2a-4232-a408-1c23d5044611",
+		"name": "Jersey201",
+		"description": "Testing 201 project case study",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "PutEmployee",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\" : \"emp1\",\r\n  \"password\" : \"pass1\",\r\n  \"fullName\" : \"Employee One\",\r\n  \"emailID\" : \"08/21/1991\",\r\n  \"dateOfBirth\" : \"emp1@email.com\",\r\n  \"gender\" : \"Male\",\r\n  \"securityQuestion\" : \"First pet?\",\r\n  \"securityAnswer\" : \"Dog\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8084/service/employees",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8084",
+					"path": [
+						"service",
+						"employees"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetEmployees",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8084/service/employees",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8084",
+					"path": [
+						"service",
+						"employees"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetEmployeeByID",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8084/service/employees/dd51ad26-3309-44ac-9c81-cef8cefc5d8c",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8084",
+					"path": [
+						"service",
+						"employees",
+						"dd51ad26-3309-44ac-9c81-cef8cefc5d8c"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -2,7 +2,6 @@ package com.srikanth;
 
 import com.srikanth.application.EmployeeApplication;
 import com.srikanth.dao.EmployeeDao;
-import com.srikanth.model.Employee;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
 import org.junit.Assert;
@@ -15,6 +14,8 @@ import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class EmployeeResourceTest extends JerseyTest {
 
@@ -33,10 +34,10 @@ public class EmployeeResourceTest extends JerseyTest {
 
     @Before
     public void setUpEmployees() {
-        emp1_id = addEmployee("emp1", "pass1", "Employee One", "emp1@email.com", "08/21/1991", "Male",
-                "First pet?", "Dog").readEntity(Employee.class).getEmployeeId();
-        emp2_id = addEmployee("emp2", "pass2", "Employee Two", "emp2@email.com", "06/04/1991", "Female",
-                "First pet?", "None").readEntity(Employee.class).getEmployeeId();
+        emp1_id = (String) toHashMap(addEmployee("emp1", "pass1", "Employee One", "emp1@email.com", "08/21/1991", "Male",
+                "First pet?", "Dog")).get("employeeId");
+        emp2_id = (String) toHashMap(addEmployee("emp2", "pass2", "Employee Two", "emp2@email.com", "06/04/1991", "Female",
+                "First pet?", "None")).get("employeeId");
     }
 
     @Test
@@ -46,40 +47,66 @@ public class EmployeeResourceTest extends JerseyTest {
                 "First pet?", "None");
         Assert.assertEquals(200, response.getStatus());
 
-        Employee rspEmp = response.readEntity(Employee.class);
-        Assert.assertNotNull(rspEmp.getEmployeeId());
-        Assert.assertEquals("emp3", rspEmp.getUsername());
+        Map<String, Object> rspEmp = toHashMap(response);
+        Assert.assertNotNull(rspEmp.get("employeeId"));
+        Assert.assertEquals("emp3", rspEmp.get("username"));
     }
 
     @Test
     public void testGetEmployee() {
-        Employee response = target("employees").path(emp1_id).request().get(Employee.class);
+        Map<String, Object> response = toHashMap(target("employees").path(emp1_id).request().get());
         Assert.assertNotNull(response);
     }
 
     @Test
     public void testGetEmployees() {
-        Collection<Employee> response = target("employees").request().get(new GenericType<Collection<Employee>>() {
+        Collection<HashMap<String, Object>> response = target("employees").request().get(new GenericType<Collection<HashMap<String, Object>>>() {
         });
         Assert.assertEquals(2, response.size());
     }
 
 
-    private Response addEmployee(String username, String password, String fullName, String emailID,
-                                 String dateOfBirth, String gender, String securityQuestion, String securityAnswer) {
-        Employee emp = new Employee();
-        emp.setUsername(username);
-        emp.setPassword(password);
-        emp.setFullName(fullName);
-        emp.setDateOfBirth(emailID);
-        emp.setEmailID(dateOfBirth);
-        emp.setGender(gender);
-        emp.setSecurityAnswer(securityQuestion);
-        emp.setSecurityAnswer(securityAnswer);
+    protected Response addEmployee(String username, String password, String fullName, String emailID,
+                                   String dateOfBirth, String gender, String securityQuestion, String securityAnswer, String... extras) {
 
-        Entity<Employee> empEntity = Entity.entity(emp, MediaType.APPLICATION_JSON_TYPE);
+        Map<String, Object> employee = new HashMap<>();
+        employee.put("username", username);
+        employee.put("password", password);
+        employee.put("fullName", fullName);
+        employee.put("dateOfBirth", dateOfBirth);
+        employee.put("emailID", emailID);
+        employee.put("gender", gender);
+        employee.put("securityQuestion", securityQuestion);
+        employee.put("securityAnswer", securityAnswer);
+
+        if (extras != null) {
+            int count = 1;
+            for (String s : extras) {
+                employee.put("extra" + count++, s);
+            }
+        }
+
+        // Entity<Employee> empEntity = Entity.entity(emp, MediaType.APPLICATION_JSON_TYPE);
+        Entity<Map<String, Object>> empEntity = Entity.entity(employee, MediaType.APPLICATION_JSON_TYPE);
 
         return target("employees").request()
-                .post(empEntity);
+                .put(empEntity);
+    }
+
+    @Test
+    public void testAddExtraFields() {
+        Response response = addEmployee("emp4", "pass4", "Employee Four", "emp4@email.com", "10/21/1993", "Male",
+                "First pet?", "Dog", "Brother");
+
+        Assert.assertEquals(200, response.getStatus());
+
+        Map<String, Object> employee = toHashMap(response);
+        Assert.assertNotNull(employee.get("employeeId"));
+        Assert.assertEquals(employee.get("extra1"), "Brother");
+    }
+
+    private Map<String, Object> toHashMap(Response response) {
+        return response.readEntity(new GenericType<HashMap<String, Object>>() {
+        });
     }
 }

@@ -1,10 +1,52 @@
 package com.srikanth.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.srikanth.util.JerseyAppConstants;
+
+import javax.persistence.*;
 import java.util.Objects;
 
+@JsonPropertyOrder({"employeeId"})
+@JsonIgnoreProperties(ignoreUnknown = true)
+@Entity
+@Table
+@NamedQueries({
+        @NamedQuery(name = JerseyAppConstants.EMPLOYEE_WITH_USERNAME_PASSWORD_NQ,
+                query = "SELECT emp from Employee emp " +
+                        "where emp.username = :username and emp.password = :password")
+})
 public class Employee {
 
+    @Id
+    @Column(unique = true, nullable = false)
     private String employeeId;
+
+    @Column(unique = true, nullable = false)
+    private String username;
+
+    @Column(nullable = false)
+    private String password;
+
+    @Column(nullable = false)
+    private String fullName;
+
+    @Column(unique = true, nullable = false)
+    private String emailID;
+
+    @Column(nullable = false)
+    private String dateOfBirth;
+
+    @Column(nullable = false)
+    private String gender;
+
+    @Column(nullable = false)
+    private String securityQuestion;
+
+    @Column(nullable = false)
+    private String securityAnswer;
+
+//    private Map<String, Object> extras = new HashMap<>();
 
     public String getEmployeeId() {
         return employeeId;
@@ -14,14 +56,6 @@ public class Employee {
         this.employeeId = employeeId;
     }
 
-    private String username;
-    private String password;
-    private String fullName;
-    private String emailID;
-    private String dateOfBirth;
-    private String gender;
-    private String securityQuestion;
-    private String securityAnswer;
 
     public String getUsername() {
         return username;
@@ -87,6 +121,15 @@ public class Employee {
         this.securityAnswer = securityAnswer;
     }
 
+//    @JsonAnyGetter
+//    public Map<String, Object> getExtras() {
+//        return extras;
+//    }
+//
+//    @JsonAnySetter
+//    public void setExtras(String key, Object value) {
+//        this.extras.put(key, value);
+//    }
 
     @Override
     public boolean equals(Object o) {

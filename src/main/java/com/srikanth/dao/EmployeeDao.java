@@ -1,22 +1,30 @@
 package com.srikanth.dao;
 
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.srikanth.model.Employee;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
 
 public class EmployeeDao {
 
-    Map<String, Employee> employees;// = new HashMap<>();
+    private Map<String, Employee> employees;// = new HashMap<>();
+
+    private ListeningExecutorService service;
 
     public EmployeeDao() {
 //        populateEmployees();
 
         // post support
         employees = new ConcurrentHashMap<String, Employee>();
+        service = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10));
     }
 
 
@@ -26,12 +34,45 @@ public class EmployeeDao {
         return employee;
     }
 
+    public ListenableFuture<Employee> addEmployeeAsync(final Employee employee) {
+        ListenableFuture<Employee> future =
+                service.submit(new Callable<Employee>() {
+                    @Override
+                    public Employee call() throws Exception {
+                        return addEmployee(employee);
+                    }
+                });
+        return future;
+    }
+
     public Collection<Employee> getEmployees() {
         return employees.values();
     }
 
+    public ListenableFuture<Collection<Employee>> getEmployeesAsync() {
+        ListenableFuture<Collection<Employee>> future =
+                service.submit(new Callable<Collection<Employee>>() {
+                    @Override
+                    public Collection<Employee> call() throws Exception {
+                        return getEmployees();
+                    }
+                });
+        return future;
+    }
+
     public Employee getEmployee(String id) {
         return employees.get(id);
+    }
+
+    public ListenableFuture<Employee> getEmployeeAsync(final String id) {
+        ListenableFuture<Employee> future =
+                service.submit(new Callable<Employee>() {
+                    @Override
+                    public Employee call() throws Exception {
+                        return getEmployee(id);
+                    }
+                });
+        return future;
     }
 
 

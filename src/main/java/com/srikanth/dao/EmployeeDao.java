@@ -1,105 +1,129 @@
 package com.srikanth.dao;
 
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.ListeningExecutorService;
-import com.google.common.util.concurrent.MoreExecutors;
+import com.srikanth.exception.EmployeeManagementException;
 import com.srikanth.model.Employee;
+import com.srikanth.util.HibernateSessionUtil;
+import com.srikanth.util.JerseyAppConstants;
+import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
 
 public class EmployeeDao {
 
-    private Map<String, Employee> employees;// = new HashMap<>();
-
-    private ListeningExecutorService service;
-
-    public EmployeeDao() {
-//        populateEmployees();
-
-        // post support
-        employees = new ConcurrentHashMap<String, Employee>();
-        service = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10));
-    }
+    private static final Logger logger = Logger.getLogger(EmployeeDao.class);
 
 
-    public Employee addEmployee(Employee employee) {
-        employee.setEmployeeId(UUID.randomUUID().toString());
-        employees.put(employee.getEmployeeId(), employee);
+    public Employee addEmployee(Employee employee) throws EmployeeManagementException {
+        logger.info("Persisting employee to database");
+        Session session = null;
+        Transaction transaction = null;
+        try {
+            SessionFactory sessionFactory = HibernateSessionUtil.getSessionFactory();
+            session = sessionFactory.openSession();
+            transaction = session.beginTransaction();
+            employee.setEmployeeId(UUID.randomUUID().toString().split("-")[0]);
+            session.persist(employee);
+            transaction.commit();
+        } catch (HibernateException ex) {
+            logger.error("Failed saving employee. Rolling back the transaction");
+            transaction.rollback();
+            throw new EmployeeManagementException("Exception during database transaction" + ex);
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
         return employee;
     }
 
-    public ListenableFuture<Employee> addEmployeeAsync(final Employee employee) {
-        ListenableFuture<Employee> future =
-                service.submit(new Callable<Employee>() {
-                    @Override
-                    public Employee call() throws Exception {
-                        return addEmployee(employee);
-                    }
-                });
-        return future;
+    public Employee deleteEmployee(Employee employee) throws EmployeeManagementException {
+        logger.info("Deleting employee from database");
+        Session session = null;
+        Transaction transaction = null;
+        try {
+            SessionFactory sessionFactory = HibernateSessionUtil.getSessionFactory();
+            session = sessionFactory.openSession();
+            transaction = session.beginTransaction();
+            session.delete(employee);
+            transaction.commit();
+        } catch (HibernateException ex) {
+            logger.error("Failed deleting employee. Rolling back the transaction");
+            transaction.rollback();
+            throw new EmployeeManagementException("Exception during database transaction" + ex);
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+        return employee;
     }
 
-    public Collection<Employee> getEmployees() {
-        return employees.values();
+    public Collection<Employee> getEmployees() throws EmployeeManagementException {
+        logger.info("Fetching all employees");
+        List<Employee> employeeList = new ArrayList<>();
+        Session session = null;
+        try {
+            SessionFactory sessionFactory = HibernateSessionUtil.getSessionFactory();
+            session = sessionFactory.openSession();
+            employeeList = session.createQuery("from Employee").list();
+        } catch (HibernateException ex) {
+            logger.error("Failed fetching employees list\n" + ex);
+            throw new EmployeeManagementException("Exception during database transaction" + ex);
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+        return employeeList;
     }
 
-    public ListenableFuture<Collection<Employee>> getEmployeesAsync() {
-        ListenableFuture<Collection<Employee>> future =
-                service.submit(new Callable<Collection<Employee>>() {
-                    @Override
-                    public Collection<Employee> call() throws Exception {
-                        return getEmployees();
-                    }
-                });
-        return future;
-    }
-
-    public Employee getEmployee(String id) {
-        return employees.get(id);
-    }
-
-    public ListenableFuture<Employee> getEmployeeAsync(final String id) {
-        ListenableFuture<Employee> future =
-                service.submit(new Callable<Employee>() {
-                    @Override
-                    public Employee call() throws Exception {
-                        return getEmployee(id);
-                    }
-                });
-        return future;
+    public Collection<Employee> getEmployee(String username, String password) throws EmployeeManagementException {
+        logger.info("Fetching employee with username " + username);
+        List<Employee> employeeList = new ArrayList<>();
+        Session session = null;
+        try {
+            SessionFactory sessionFactory = HibernateSessionUtil.getSessionFactory();
+            session = sessionFactory.openSession();
+            Query query = session.createNamedQuery(JerseyAppConstants.EMPLOYEE_WITH_USERNAME_PASSWORD_NQ)
+                    .setParameter("username", username)
+                    .setParameter("password", password);
+            employeeList = query.list();
+        } catch (HibernateException ex) {
+            logger.error("Failed fetching employees list\n" + ex);
+            throw new EmployeeManagementException("Exception during database transaction" + ex);
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+        return employeeList;
     }
 
 
-    private void populateEmployees() {
-        Employee emp1 = new Employee();
-        emp1.setEmployeeId("1");
-        emp1.setUsername("emp1");
-        emp1.setPassword("pass1");
-        emp1.setFullName("Employee One");
-        emp1.setDateOfBirth("08/21/1991");
-        emp1.setEmailID("eone@email.com");
-        emp1.setGender("Male");
-        emp1.setSecurityAnswer("First pet?");
-        emp1.setSecurityAnswer("dog");
-
-        Employee emp2 = new Employee();
-        emp2.setEmployeeId("2");
-        emp2.setUsername("emp2");
-        emp2.setPassword("pass2");
-        emp2.setFullName("Employee Two");
-        emp2.setDateOfBirth("06/04/1994");
-        emp2.setEmailID("etwo@email.com");
-        emp2.setGender("Female");
-        emp2.setSecurityAnswer("First pet?");
-        emp2.setSecurityAnswer("none");
-
-        employees.put(emp1.getEmployeeId(), emp1);
-        employees.put(emp2.getEmployeeId(), emp2);
+    public Employee getEmployee(String id) throws EmployeeManagementException {
+        logger.info("Fetching Employee using employee id " + id);
+        Employee employee = null;
+        Session session = null;
+        try {
+            SessionFactory sessionFactory = HibernateSessionUtil.getSessionFactory();
+            session = sessionFactory.openSession();
+            employee = session.get(Employee.class, id);
+        } catch (HibernateException ex) {
+            logger.error("Failed fetching employee\n" + ex);
+            throw new EmployeeManagementException("Exception during database transaction" + ex);
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+        return employee;
     }
 }

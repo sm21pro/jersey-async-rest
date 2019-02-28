@@ -5,6 +5,8 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.srikanth.dao.EmployeeDao;
 import com.srikanth.model.Employee;
+import com.srikanth.service.EmployeeService;
+import com.srikanth.valueobject.EmployeeServiceResponseVO;
 import org.glassfish.jersey.server.ManagedAsync;
 
 import javax.ws.rs.*;
@@ -21,7 +23,7 @@ public class EmployeeResource {
     // Replacing above code with binder context
 
     @Context
-    EmployeeDao dao;
+    EmployeeService empService;
 
     @GET
     // priority of mediatype to be sent
@@ -30,10 +32,10 @@ public class EmployeeResource {
     public void getEmployees(@Suspended final AsyncResponse response) {
         // return dao.getEmployees();
         // response.resume(dao.getEmployees());
-        ListenableFuture<Collection<Employee>> empFuture = dao.getEmployeesAsync();
-        Futures.addCallback(empFuture, new FutureCallback<Collection<Employee>>() {
+        ListenableFuture<EmployeeServiceResponseVO> empFuture = empService.getEmployees();
+        Futures.addCallback(empFuture, new FutureCallback<EmployeeServiceResponseVO>() {
             @Override
-            public void onSuccess(Collection<Employee> employees) {
+            public void onSuccess(EmployeeServiceResponseVO employees) {
                 response.resume(employees);
             }
 
@@ -46,14 +48,14 @@ public class EmployeeResource {
 
     @Path("/{id}")
     @GET
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON + ";qs=1", MediaType.APPLICATION_XML + ";qs=0.5"})
     @ManagedAsync
     public void getEmployee(@PathParam("id") String id, @Suspended final AsyncResponse response) {
         // response.resume(dao.getEmployee(id));
-        ListenableFuture<Employee> empFuture = dao.getEmployeeAsync(id);
-        Futures.addCallback(empFuture, new FutureCallback<Employee>() {
+        ListenableFuture<EmployeeServiceResponseVO> empFuture = empService.getEmployee(id);
+        Futures.addCallback(empFuture, new FutureCallback<EmployeeServiceResponseVO>() {
             @Override
-            public void onSuccess(Employee empFetched) {
+            public void onSuccess(EmployeeServiceResponseVO empFetched) {
                 response.resume(empFetched);
             }
 
@@ -66,14 +68,14 @@ public class EmployeeResource {
 
     @PUT
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON + ";qs=1", MediaType.APPLICATION_XML + ";qs=0.5"})
     @ManagedAsync
     public void addEmployee(Employee employee, @Suspended final AsyncResponse response) {
         // response.resume(dao.addEmployee(employee));
-        ListenableFuture<Employee> empFuture = dao.addEmployeeAsync(employee);
-        Futures.addCallback(empFuture, new FutureCallback<Employee>() {
+        ListenableFuture<EmployeeServiceResponseVO> empFuture = empService.addEmployee(employee);
+        Futures.addCallback(empFuture, new FutureCallback<EmployeeServiceResponseVO>() {
             @Override
-            public void onSuccess(Employee addedEmployee) {
+            public void onSuccess(EmployeeServiceResponseVO addedEmployee) {
                 response.resume(addedEmployee);
             }
 

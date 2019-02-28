@@ -1,19 +1,20 @@
 package com.srikanth.service;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import com.srikanth.model.Employee;
 import com.srikanth.valueobject.EmployeeServiceResponseVO;
 
 public interface EmployeeService {
 
-    EmployeeServiceResponseVO addEmployee(Employee employee);
+    ListenableFuture<EmployeeServiceResponseVO> addEmployee(Employee employee);
 
-    EmployeeServiceResponseVO deleteEmployee(Employee employee);
+    ListenableFuture<EmployeeServiceResponseVO> deleteEmployee(Employee employee);
 
-    EmployeeServiceResponseVO getEmployees();
+    ListenableFuture<EmployeeServiceResponseVO> getEmployees();
 
-    EmployeeServiceResponseVO getEmployee(String id);
+    ListenableFuture<EmployeeServiceResponseVO> getEmployee(String id);
 
-    EmployeeServiceResponseVO checkLogin(String username, String password);
+    ListenableFuture<EmployeeServiceResponseVO> checkLogin(String username, String password);
 
 
 }

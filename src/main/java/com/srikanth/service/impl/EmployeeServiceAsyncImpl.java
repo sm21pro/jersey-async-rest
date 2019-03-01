@@ -47,13 +47,13 @@ public class EmployeeServiceAsyncImpl implements EmployeeService {
     }
 
     @Override
-    public ListenableFuture<EmployeeServiceResponseVO> deleteEmployee(final Employee employee) {
+    public ListenableFuture<EmployeeServiceResponseVO> deleteEmployee(final String empId) {
         ListenableFuture<EmployeeServiceResponseVO> future =
                 service.submit(new Callable<EmployeeServiceResponseVO>() {
                     @Override
                     public EmployeeServiceResponseVO call() throws Exception {
                         try {
-                            dao.deleteEmployee(employee);
+                            dao.deleteEmployee(empId);
                             return ResponseBuilderUtil.getResponse("200", null, "Employee data deleted successfully.");
                         } catch (EmployeeManagementException ex) {
                             return ResponseBuilderUtil.getResponse("500", "Failed deleting employee data. Please check log.", ex);

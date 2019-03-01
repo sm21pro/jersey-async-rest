@@ -66,6 +66,30 @@ public class EmployeeDao {
         return employee;
     }
 
+    public Employee deleteEmployee(String employeeId) throws EmployeeManagementException {
+        logger.info("Deleting employee from database");
+        Session session = null;
+        Transaction transaction = null;
+        Employee employeeToDel = null;
+        try {
+            SessionFactory sessionFactory = HibernateSessionUtil.getSessionFactory();
+            session = sessionFactory.openSession();
+            transaction = session.beginTransaction();
+            employeeToDel = (Employee) session.load(Employee.class, employeeId);
+            session.delete(employeeToDel);
+            transaction.commit();
+        } catch (HibernateException ex) {
+            logger.error("Failed deleting employee. Rolling back the transaction");
+            transaction.rollback();
+            throw new EmployeeManagementException("Exception during database transaction" + ex);
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+        return employeeToDel;
+    }
+
     public Collection<Employee> getEmployees() throws EmployeeManagementException {
         logger.info("Fetching all employees");
         List<Employee> employeeList = new ArrayList<>();

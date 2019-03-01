@@ -97,6 +97,62 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "CheckLogin",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"emp1\",\n\t\"password\": \"pass1\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8084/service/employees",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8084",
+					"path": [
+						"service",
+						"employees"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteEmployeePut",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8084/service/employees/58a6db56",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8084",
+					"path": [
+						"service",
+						"employees",
+						"58a6db56"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }

@@ -8,7 +8,7 @@ public interface EmployeeService {
 
     ListenableFuture<EmployeeServiceResponseVO> addEmployee(Employee employee);
 
-    ListenableFuture<EmployeeServiceResponseVO> deleteEmployee(Employee employee);
+    ListenableFuture<EmployeeServiceResponseVO> deleteEmployee(String empId);
 
     ListenableFuture<EmployeeServiceResponseVO> getEmployees();
 

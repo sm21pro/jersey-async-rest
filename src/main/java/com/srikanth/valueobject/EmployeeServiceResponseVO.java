@@ -4,16 +4,16 @@ import java.util.Objects;
 
 public class EmployeeServiceResponseVO {
 
-    private String statusCode;
+    private int statusCode;
     private String status;
     private String message;
     private Object data;
 
-    public String getStatusCode() {
+    public int getStatusCode() {
         return statusCode;
     }
 
-    public void setStatusCode(String statusCode) {
+    public void setStatusCode(int statusCode) {
         this.statusCode = statusCode;
     }
 

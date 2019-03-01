@@ -11,11 +11,11 @@ public class ResponseBuilderUtil {
     private static final String SUCCESS = "Success";
     private static final String FAILURE = "failure";
 
-    public static EmployeeServiceResponseVO getResponse(String responseCode, Object employeesObj, String message) {
+    public static EmployeeServiceResponseVO getResponse(int responseCode, Object employeesObj, String message) {
         EmployeeServiceResponseVO responseVO = new EmployeeServiceResponseVO();
         responseVO.setStatusCode(responseCode);
 
-        if ("200".equalsIgnoreCase(responseCode)) {
+        if (200== responseCode) {
             responseVO.setStatus(SUCCESS);
         } else {
             responseVO.setStatus(FAILURE);
@@ -35,7 +35,7 @@ public class ResponseBuilderUtil {
         return responseVO;
     }
 
-    public static EmployeeServiceResponseVO getResponse(String responseCode, String messageToUser, Exception exception) {
+    public static EmployeeServiceResponseVO getResponse(int responseCode, String messageToUser, Exception exception) {
         EmployeeServiceResponseVO responseVO = new EmployeeServiceResponseVO();
         responseVO.setStatusCode(responseCode);
         responseVO.setStatus(FAILURE);

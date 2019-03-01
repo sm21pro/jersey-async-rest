@@ -18,7 +18,7 @@ import java.net.URI;
  */
 public class Main {
     // Base URI the Grizzly HTTP server will listen on
-    public static final String BASE_URI = "http://localhost:8084/service/";
+    public static final String BASE_URI = "http://localhost:8084/";
 
 
     /**
@@ -28,12 +28,11 @@ public class Main {
      */
     public static HttpServer startServer() {
 
-        final EmployeeDao dao = new EmployeeDao();
         final EmployeeService empService = new EmployeeServiceAsyncImpl();
 
         // create a resource config that scans for JAX-RS resources and providers
         // in com.srikanth package
-        final ResourceConfig rc = new EmployeeApplication(dao, empService);
+        final ResourceConfig rc = new EmployeeApplication(empService);
 
 
         // create and start a new instance of grizzly http server

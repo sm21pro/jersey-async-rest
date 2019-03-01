@@ -1,0 +1,40 @@
+package com.srikanth.exception;
+
+public class EmployeeNotFoundException extends Exception {
+
+    private int statusCode;
+
+    public EmployeeNotFoundException() {
+        super();
+    }
+
+    public EmployeeNotFoundException(String message) {
+        super(message);
+    }
+
+    public EmployeeNotFoundException(int statusCode, String message) {
+        super(message);
+        this.statusCode = statusCode;
+    }
+
+    public EmployeeNotFoundException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public EmployeeNotFoundException(int statusCode, String message, Throwable cause) {
+        super(message, cause);
+        this.statusCode = statusCode;
+    }
+
+    public EmployeeNotFoundException(Throwable cause) {
+        super(cause);
+    }
+
+    protected EmployeeNotFoundException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
+
+    public int getStatusCode() {
+        return statusCode;
+    }
+}

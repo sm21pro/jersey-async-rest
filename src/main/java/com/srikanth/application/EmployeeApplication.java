@@ -9,9 +9,12 @@ import com.srikanth.service.impl.EmployeeServiceAsyncImpl;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 
+/**
+ * Register various configuration used in the app through context
+ */
 public class EmployeeApplication extends ResourceConfig {
 
-    public EmployeeApplication(final EmployeeDao dao, final EmployeeService empService) {
+    public EmployeeApplication(final EmployeeService empService) {
 
         JacksonJsonProvider json = new JacksonJsonProvider()
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
@@ -23,12 +26,12 @@ public class EmployeeApplication extends ResourceConfig {
 
         packages("com.srikanth");
 
-        register(new AbstractBinder() {
-            @Override
-            protected void configure() {
-                bind(dao).to(EmployeeDao.class);
-            }
-        });
+//        register(new AbstractBinder() {
+//            @Override
+//            protected void configure() {
+//                bind(dao).to(EmployeeDao.class);
+//            }
+//        });
         register(new AbstractBinder() {
             @Override
             protected void configure() {

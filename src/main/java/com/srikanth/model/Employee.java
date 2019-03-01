@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @JsonPropertyOrder({"employeeId"})
-@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIgnoreProperties(ignoreUnknown = true) // For I am using MySQL DB, this is to avoid request break
 @Entity
 @Table
 @NamedQueries({

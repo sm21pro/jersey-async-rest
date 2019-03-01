@@ -14,16 +14,75 @@ import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-@Path("/employees")
+/**
+ * Class that handles REST calls asynchronously
+ */
+@Path("/EmpMgt")
 public class EmployeeResource {
-
-    // EmployeeDao dao = new EmployeeDao();
-    // Replacing above code with binder context
 
     @Context
     EmployeeService empService;
 
+    /**
+     * ADD EMPLOYEE TO DATABASE
+     *
+     * @param employee
+     * @param response
+     */
+    @PUT
+    @Path("/addEmp")
+    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON + ";qs=1", MediaType.APPLICATION_XML + ";qs=0.5"})
+    @ManagedAsync
+    public void addEmployee(Employee employee, @Suspended final AsyncResponse response) {
+        // response.resume(dao.addEmployee(employee));
+        ListenableFuture<EmployeeServiceResponseVO> empFuture = empService.addEmployee(employee);
+        Futures.addCallback(empFuture, new FutureCallback<EmployeeServiceResponseVO>() {
+            @Override
+            public void onSuccess(EmployeeServiceResponseVO addedEmployee) {
+                response.resume(addedEmployee);
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                response.resume(throwable);
+            }
+        });
+    }
+
+    /**
+     * DELETE EMPLOYEE WITH EMPLOYEE ID
+     *
+     * @param empId
+     * @param response
+     */
+    @PUT
+    @Path("/deleteEmp/{empId}")
+    @Produces({MediaType.APPLICATION_JSON + ";qs=1", MediaType.APPLICATION_XML + ";qs=0.5"})
+    @ManagedAsync
+    public void deleteEmployee(@PathParam("empId") String empId, @Suspended final AsyncResponse response) {
+        // response.resume(dao.addEmployee(employee));
+        ListenableFuture<EmployeeServiceResponseVO> empFuture = empService.deleteEmployee(empId);
+        Futures.addCallback(empFuture, new FutureCallback<EmployeeServiceResponseVO>() {
+            @Override
+            public void onSuccess(EmployeeServiceResponseVO addedEmployee) {
+                response.resume(addedEmployee);
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                response.resume(throwable);
+            }
+        });
+    }
+
+    /**
+     * GET ALL EMPLOYEES FROM DATABASE
+     *
+     * @param response
+     */
     @GET
+    @Path("/getAllEmpDetails")
     // priority of mediatype to be sent
     @Produces({MediaType.APPLICATION_JSON + ";qs=1", MediaType.APPLICATION_XML + ";qs=0.5"})
     @ManagedAsync
@@ -44,7 +103,13 @@ public class EmployeeResource {
         });
     }
 
-    @Path("/{id}")
+    /**
+     * GET EMPLOYEE USING EMPLOYEE ID
+     *
+     * @param id
+     * @param response
+     */
+    @Path("/getByEmpId/{id}")
     @GET
     @Produces({MediaType.APPLICATION_JSON + ";qs=1", MediaType.APPLICATION_XML + ";qs=0.5"})
     @ManagedAsync
@@ -64,47 +129,15 @@ public class EmployeeResource {
         });
     }
 
-    @PUT
-    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    @Produces({MediaType.APPLICATION_JSON + ";qs=1", MediaType.APPLICATION_XML + ";qs=0.5"})
-    @ManagedAsync
-    public void addEmployee(Employee employee, @Suspended final AsyncResponse response) {
-        // response.resume(dao.addEmployee(employee));
-        ListenableFuture<EmployeeServiceResponseVO> empFuture = empService.addEmployee(employee);
-        Futures.addCallback(empFuture, new FutureCallback<EmployeeServiceResponseVO>() {
-            @Override
-            public void onSuccess(EmployeeServiceResponseVO addedEmployee) {
-                response.resume(addedEmployee);
-            }
 
-            @Override
-            public void onFailure(Throwable throwable) {
-                response.resume(throwable);
-            }
-        });
-    }
-
-    @PUT
-    @Path("/{empId}")
-    @Produces({MediaType.APPLICATION_JSON + ";qs=1", MediaType.APPLICATION_XML + ";qs=0.5"})
-    @ManagedAsync
-    public void deleteEmployee(@PathParam("empId") String empId, @Suspended final AsyncResponse response) {
-        // response.resume(dao.addEmployee(employee));
-        ListenableFuture<EmployeeServiceResponseVO> empFuture = empService.deleteEmployee(empId);
-        Futures.addCallback(empFuture, new FutureCallback<EmployeeServiceResponseVO>() {
-            @Override
-            public void onSuccess(EmployeeServiceResponseVO addedEmployee) {
-                response.resume(addedEmployee);
-            }
-
-            @Override
-            public void onFailure(Throwable throwable) {
-                response.resume(throwable);
-            }
-        });
-    }
-
+    /**
+     * AUTHENTICATE USER WITH USERNAME AND PASSWORD
+     *
+     * @param employee
+     * @param response
+     */
     @POST
+    @Path("/checkLogin")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces({MediaType.APPLICATION_JSON + ";qs=1", MediaType.APPLICATION_XML + ";qs=0.5"})
     @ManagedAsync

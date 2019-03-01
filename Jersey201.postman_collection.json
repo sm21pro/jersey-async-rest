@@ -8,6 +8,19 @@
 	"item": [
 		{
 			"name": "PutEmployee",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "5e8d8d6f-48b2-4db6-96e0-55e6b415ef95",
+						"exec": [
+							"",
+							"pm.globals.set(\"idFromCreate\", pm.response.json().data.employeeId);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "PUT",
 				"header": [
@@ -23,15 +36,15 @@
 					"raw": "{\r\n  \"username\" : \"emp1\",\r\n  \"password\" : \"pass1\",\r\n  \"fullName\" : \"Employee One\",\r\n  \"emailID\" : \"08/21/1991\",\r\n  \"dateOfBirth\" : \"emp1@email.com\",\r\n  \"gender\" : \"Male\",\r\n  \"securityQuestion\" : \"First pet?\",\r\n  \"securityAnswer\" : \"Dog\"\r\n}"
 				},
 				"url": {
-					"raw": "http://localhost:8084/service/employees",
+					"raw": "http://localhost:8084/EmpMgt/addEmp",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8084",
 					"path": [
-						"service",
-						"employees"
+						"EmpMgt",
+						"addEmp"
 					]
 				}
 			},
@@ -47,21 +60,15 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://localhost:8084/service/employees",
+					"raw": "http://localhost:8084/EmpMgt/getAllEmpDetails",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8084",
 					"path": [
-						"service",
-						"employees"
-					],
-					"query": [
-						{
-							"key": "",
-							"value": ""
-						}
+						"EmpMgt",
+						"getAllEmpDetails"
 					]
 				}
 			},
@@ -83,16 +90,16 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://localhost:8084/service/employees/dd51ad26-3309-44ac-9c81-cef8cefc5d8c",
+					"raw": "http://localhost:8084/EmpMgt/getByEmpId/{{idFromCreate}}",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8084",
 					"path": [
-						"service",
-						"employees",
-						"dd51ad26-3309-44ac-9c81-cef8cefc5d8c"
+						"EmpMgt",
+						"getByEmpId",
+						"{{idFromCreate}}"
 					]
 				}
 			},
@@ -115,15 +122,15 @@
 					"raw": "{\n\t\"username\": \"emp1\",\n\t\"password\": \"pass1\"\n}"
 				},
 				"url": {
-					"raw": "http://localhost:8084/service/employees",
+					"raw": "http://localhost:8084/EmpMgt/checkLogin",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8084",
 					"path": [
-						"service",
-						"employees"
+						"EmpMgt",
+						"checkLogin"
 					]
 				}
 			},
@@ -139,16 +146,16 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://localhost:8084/service/employees/58a6db56",
+					"raw": "http://localhost:8084/EmpMgt/deleteEmp/{{idFromCreate}}",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8084",
 					"path": [
-						"service",
-						"employees",
-						"58a6db56"
+						"EmpMgt",
+						"deleteEmp",
+						"{{idFromCreate}}"
 					]
 				}
 			},

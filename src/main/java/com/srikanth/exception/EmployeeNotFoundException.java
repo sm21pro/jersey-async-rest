@@ -30,9 +30,7 @@ public class EmployeeNotFoundException extends Exception {
         super(cause);
     }
 
-    protected EmployeeNotFoundException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
+
 
     public int getStatusCode() {
         return statusCode;

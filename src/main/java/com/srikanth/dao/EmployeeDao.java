@@ -45,27 +45,27 @@ public class EmployeeDao {
         return employee;
     }
 
-    public Employee deleteEmployee(Employee employee) {
-        logger.info("Deleting employee from database");
-        Session session = null;
-        Transaction transaction = null;
-        try {
-            SessionFactory sessionFactory = HibernateSessionUtil.getSessionFactory();
-            session = sessionFactory.openSession();
-            transaction = session.beginTransaction();
-            session.delete(employee);
-            transaction.commit();
-        } catch (HibernateException ex) {
-            logger.error("Failed deleting employee. Rolling back the transaction");
-            transaction.rollback();
-            throw ex;
-        } finally {
-            if (session != null) {
-                session.close();
-            }
-        }
-        return employee;
-    }
+//    public Employee deleteEmployee(Employee employee) {
+//        logger.info("Deleting employee from database");
+//        Session session = null;
+//        Transaction transaction = null;
+//        try {
+//            SessionFactory sessionFactory = HibernateSessionUtil.getSessionFactory();
+//            session = sessionFactory.openSession();
+//            transaction = session.beginTransaction();
+//            session.delete(employee);
+//            transaction.commit();
+//        } catch (HibernateException ex) {
+//            logger.error("Failed deleting employee. Rolling back the transaction");
+//            transaction.rollback();
+//            throw ex;
+//        } finally {
+//            if (session != null) {
+//                session.close();
+//            }
+//        }
+//        return employee;
+//    }
 
     public Employee deleteEmployee(String employeeId) {
         logger.info("Deleting employee from database");
@@ -83,7 +83,9 @@ public class EmployeeDao {
             }
         } catch (HibernateException ex) {
             logger.error("Failed deleting employee. Rolling back the transaction");
-            transaction.rollback();
+            if (transaction != null) {
+                transaction.rollback();
+            }
             throw ex;
         } finally {
             if (session != null) {
